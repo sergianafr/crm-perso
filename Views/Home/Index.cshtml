@@ -34,23 +34,26 @@
     }
 </style>
 
-<div class="container py-4">
-    <header class="mb-4">
-        <h1 class="text-center">Dashboard</h1>
-    </header>
+    <div class="container py-4">
+        <header class="mb-4">
+            <h1 class="text-center">Dashboard</h1>
+        </header>
 
-    <div class="row g-3">
+        <div class="row g-3">
         <!-- Card 1 -->
         <div class="col-md-4">
             <a href="@Url.Action("Customers", "Dashboard")" class="text-decoration-none"> 
-                <div class="card dashboard-card">
-                    <div class="card-body p-4" id="customers">
-                        <div class="text-center">
-                            <i class="fas fa-user dashboard-icon text-info"></i> <!-- Icône non remplie -->
+                <div class="card dashboard-card h-100"> <!-- h-100 pour une hauteur égale -->
+                    <div class="card-body d-flex flex-column p-3"> <!-- flex-column pour organiser le contenu verticalement -->
+                        <div class="text-center mb-3"> <!-- mb-3 pour l'espacement -->
+                            <i class="fas fa-user dashboard-icon text-info"></i> <!-- Icône -->
                         </div>
-                        <h4 class="card-title text-center">Customers</h4>
-                        <h2 class="card-text text-center mb-2">@Model.NbCustomers</h2> 
-                        <p class="card-text text-center mb-2">Total budget: @Model.TotalBudgetFormat</p>
+                        <h4 class="card-title text-center mb-3">Customers</h4> <!-- Titre -->
+                        <div class="text-center mt-auto"> <!-- mt-auto pour pousser le contenu vers le bas -->
+                            <h2 class="card-text mb-2">@Model.NbCustomers</h2> 
+                            <p class="card-text mb-1"><strong>Total budget:</strong> @Model.TotalBudgetFormat</p>
+                            <p class="card-text mb-0"><strong>Total expense:</strong> @Model.TotalExpenseFormat</p>
+                        </div>
                     </div>
                 </div>
             </a>
@@ -59,13 +62,15 @@
         <!-- Card 2 -->
         <div class="col-md-4">
             <a href="@Url.Action("Leads", "Dashboard")" class="text-decoration-none"> 
-                <div class="card dashboard-card">
-                    <div class="card-body p-4" id="leads">
-                        <div class="text-center">
-                            <i class="fas fa-user-plus dashboard-icon text-warning"></i>
+                <div class="card dashboard-card h-100"> <!-- h-100 pour une hauteur égale -->
+                    <div class="card-body d-flex flex-column p-3"> <!-- flex-column pour organiser le contenu verticalement -->
+                        <div class="text-center mb-3"> <!-- mb-3 pour l'espacement -->
+                            <i class="fas fa-user-plus dashboard-icon text-warning"></i> <!-- Icône -->
                         </div>
-                        <h4 class="card-title text-center">Leads</h4>
-                        <h2 class="card-text text-center mb-2">@Model.NbLeads</h2>
+                        <h4 class="card-title text-center mb-3">Leads</h4> <!-- Titre -->
+                        <div class="text-center mt-auto"> <!-- mt-auto pour pousser le contenu vers le bas -->
+                            <h2 class="card-text mb-0">@Model.NbLeads</h2>
+                        </div>
                     </div>
                 </div>
             </a>
@@ -74,22 +79,25 @@
         <!-- Card 3 -->
         <div class="col-md-4">
             <a href="@Url.Action("Tickets", "Dashboard")" class="text-decoration-none">
-                <div class="card dashboard-card" id="tickets">
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <i class="fas fa-ticket-alt dashboard-icon text-success"></i> <!-- Icône non remplie -->
+                <div class="card dashboard-card h-100"> <!-- h-100 pour une hauteur égale -->
+                    <div class="card-body d-flex flex-column p-3"> <!-- flex-column pour organiser le contenu verticalement -->
+                        <div class="text-center mb-3"> <!-- mb-3 pour l'espacement -->
+                            <i class="fas fa-ticket-alt dashboard-icon text-success"></i> <!-- Icône -->
                         </div>
-                        <h4 class="card-title text-center">Tickets</h4>
-                        <h2 class="card-text text-center mb-2">@Model.NbTickets</h2> <!-- Nombre de tickets -->
+                        <h4 class="card-title text-center mb-3">Tickets</h4> <!-- Titre -->
+                        <div class="text-center mt-auto"> <!-- mt-auto pour pousser le contenu vers le bas -->
+                            <h2 class="card-text mb-0">@Model.NbTickets</h2>
+                        </div>
                     </div>
                 </div>
             </a>
         </div>
     </div>
 
-    <!-- Graphique -->
+    <!-- Graphiques côte à côte -->
     <div class="row mt-4">
-        <div class="col-md-12">
+        <!-- Graphique des budgets -->
+        <div class="col-md-6">
             <div class="card dashboard-card">
                 <div class="card-body">
                     <h4 class="card-title text-center">Customer Budgets</h4>
@@ -97,33 +105,77 @@
                 </div>
             </div>
         </div>
+
+        <!-- Graphique des dépenses -->
+        <div class="col-md-6">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h4 class="card-title text-center">Customer Expenses</h4>
+                    <canvas id="customerExpenseChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     // Récupérer les données du modèle
     var customerBudgets = @Html.Raw(Json.Serialize(Model.CustomerBudget));
+    var customerExpenses = @Html.Raw(Json.Serialize(Model.CustomerExpense));
 
-    // Préparer les données pour Chart.js
-    var labels = customerBudgets.map(function(customer) {
+    // Préparer les données pour les budgets
+    var budgetLabels = customerBudgets.map(function(customer) {
         return customer.customerName;
     });
 
-    var data = customerBudgets.map(function(customer) {
+    var budgetData = customerBudgets.map(function(customer) {
         return customer.totalAmount;
     });
 
-    // Créer le graphique
-    var ctx = document.getElementById('customerBudgetChart').getContext('2d');
-    var chart = new Chart(ctx, {
+    // Préparer les données pour les dépenses
+    var expenseLabels = customerExpenses.map(function(customer) {
+        return customer.customerName;
+    });
+
+    var expenseData = customerExpenses.map(function(customer) {
+        return customer.totalAmount;
+    });
+
+    // Créer le graphique des budgets
+    var budgetCtx = document.getElementById('customerBudgetChart').getContext('2d');
+    var budgetChart = new Chart(budgetCtx, {
         type: 'bar', // Type de graphique (bar, line, pie, etc.)
         data: {
-            labels: labels,
+            labels: budgetLabels,
             datasets: [{
-                label: 'Total Amount',
-                data: data,
+                label: 'Total Budget',
+                data: budgetData,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Créer le graphique des dépenses
+    var expenseCtx = document.getElementById('customerExpenseChart').getContext('2d');
+    var expenseChart = new Chart(expenseCtx, {
+        type: 'bar', // Type de graphique (bar, line, pie, etc.)
+        data: {
+            labels: expenseLabels,
+            datasets: [{
+                label: 'Total Expense',
+                data: expenseData,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1
             }]
         },

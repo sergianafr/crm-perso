@@ -8,5 +8,9 @@ public class DashboardData
     public decimal totalBudget {get; set;}
     public string TotalBudgetFormat {get; set;}
     public List<CustomerTBDto> CustomerBudget {get; set;}
+    public string TotalExpense {get; set;}
+    public string TotalExpenseFormat {get; set;}
+    public List<CustomerTBDto> CustomerExpense {get; set;}
+
 
 }
