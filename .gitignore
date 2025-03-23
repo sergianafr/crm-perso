@@ -1,0 +1,85 @@
+# Fichiers de compilation
+bin/
+obj/
+
+# Fichiers de sortie de build
+/publish/
+
+# Fichiers de cache de l'IDE
+.vs/
+.vscode/
+
+# Fichiers de configuration utilisateur
+*.user
+*.suo
+*.userprefs
+
+# Fichiers de cache de NuGet
+.nuget/
+packages/
+*.nupkg
+nuget.exe
+
+# Fichiers de cache de Roslyn
+*.cache
+*.ide/
+
+# Fichiers de logs et de diagnostics
+*.log
+*.sublime-workspace
+
+# Fichiers de test
+TestResults/
+*.trx
+*.coverage
+
+# Fichiers de configuration spécifiques à l'environnement
+appsettings.Development.json
+appsettings.Staging.json
+appsettings.Production.json
+
+# Fichiers de secrets
+secrets.json
+
+# Fichiers générés par Visual Studio
+*.csproj.user
+*.vbproj.user
+*.sln.ide
+*.csproj.ide
+*.vbproj.ide
+
+# Fichiers temporaires
+*.tmp
+*.temp
+
+# Fichiers de dépendances
+node_modules/
+bower_components/
+jspm_packages/
+
+# Fichiers de packages front-end
+lib/
+dist/
+
+# Fichiers de base de données locale
+*.mdf
+*.ldf
+*.sdf
+
+# Fichiers de migrations Entity Framework
+/Migrations/
+
+# Fichiers de déploiement
+*.zip
+*.backup
+*.bak
+
+# Fichiers de cache
+*.cache
+
+# Fichiers de sauvegarde
+*.bak
+*.backup
+
+# Fichiers de verrouillage
+*.lock

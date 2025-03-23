@@ -1,6 +1,9 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using crm_perso.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace crm_perso.Controllers;
 
@@ -28,4 +31,10 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    public IActionResult Rate()
+    {
+        return View();
+    }
+    
 }

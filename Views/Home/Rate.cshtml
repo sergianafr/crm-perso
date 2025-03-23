@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Rate configuration";
+}
+<h1>@ViewData["Title"]</h1>
+
+<form action="" id="rateForm" method="post">
+    <div class="form-group">
+        <label for="rate">Rate:</label>
+        <input type="number" step="0.01" class="form-control" id="rate" name="rate" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+<script>
+    document.getElementById('rateForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent page reload
+
+        const rate = document.getElementById('rate').value;
+        console.log(rate);
+
+        fetch('http://localhost:8080/api/rate/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials:'include',
+            body: JSON.stringify({ rate: rate })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parser la réponse en JSON
+                })
+            .then(data => {
+                if (data.success) {
+                    alert('Rate saved successfully');
+                } else {
+                    alert('An error occurred while saving the rate');
+                }
+            });
+    });
+
+    @* function getCsrfToken() {
+        console.log(document.cookie);
+    return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('XSRF-TOKEN='))
+        .split('=')[1];
+    } *@
+</script>

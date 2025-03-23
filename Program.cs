@@ -1,15 +1,38 @@
+using crm_perso.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Ajouter les services au conteneur
 builder.Services.AddControllersWithViews();
+
+// Configuration de la connexion à MySQL
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+// Ajouter les services d'authentification
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Schéma par défaut pour les cookies
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme; // Schéma de défi pour Google
+})
+.AddCookie() // Utiliser les cookies pour gérer l'authentification
+.AddGoogle(options =>
+{
+    // Récupérer l'ID client et la clé secrète depuis appsettings.json
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configurer le pipeline de requêtes HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    // La valeur HSTS par défaut est de 30 jours. Vous pouvez la modifier pour les scénarios de production.
     app.UseHsts();
 }
 
@@ -18,6 +41,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Activer l'authentification (doit être placé avant UseAuthorization)
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
