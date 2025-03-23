@@ -4,7 +4,7 @@
     ViewData["Title"] = "Liste des Leads";
 }
 
-<h1Liste des Leads</h1>
+<h1>Liste des Leads</h1>
 
 <table class="table">
     <thead>
@@ -18,6 +18,7 @@
             <th>Customer</th>
             <th>Created at</th>
             <th>Expense</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -32,8 +33,87 @@
                 <td>@lead.EmployeeName</td>
                 <td>@lead.CustomerName</td>
                 <td>@lead.CreatedAt</td>
-                <td>@lead.Expense</td>
+                <td id="expense-@lead.LeadId">@lead.Expense</td>
+                <td>
+                    <a href="#" class="edit-expense" data-id="@lead.LeadId" data-expense="@lead.Expense">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="expenseModal" tabindex="-1" role="dialog" aria-labelledby="expenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="expenseModalLabel">Update Expense</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="leadId">
+                <div class="form-group">
+                    <label for="newExpense">New amount:</label>
+                    <input type="text" class="form-control" id="newExpense">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveExpense">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".edit-expense").click(function () {
+                var leadId = $(this).data("id");
+                var expense = $(this).data("expense");
+
+                $("#leadId").val(leadId);
+                $("#newExpense").val(expense);
+
+                $("#expenseModal").modal("show");
+            });
+
+            $("#saveExpense").click(function () {
+                var leadId = $("#leadId").val();
+                var newExpense = $("#newExpense").val();
+
+                fetch('http://localhost:8080/api/dashboards/leads/update-expense', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials:'include',
+                    body: JSON.stringify({ id: leadId, amount: newExpense })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.log(response);
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        $("#expense-" + leadId).text(newExpense);
+                        $("#expenseModal").modal("hide");
+                    } else {
+                        alert("Erreur : " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                    alert("Une erreur s'est produite.");
+                });
+            });
+        });
+    </script>
+}
