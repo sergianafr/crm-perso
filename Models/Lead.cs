@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace crm_perso.Models;
 
-public partial class TriggerLead
+public partial class Lead
 {
     public uint LeadId { get; set; }
 

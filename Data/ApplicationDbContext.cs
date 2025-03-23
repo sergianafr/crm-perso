@@ -43,9 +43,9 @@ public partial class ApplicationDbContext : DbContext
 
     public virtual DbSet<TriggerContract> TriggerContracts { get; set; }
 
-    public virtual DbSet<TriggerLead> TriggerLeads { get; set; }
+    public virtual DbSet<Lead> Leads { get; set; }
 
-    public virtual DbSet<TriggerTicket> TriggerTickets { get; set; }
+    public virtual DbSet<Ticket> Tickets { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -572,7 +572,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasConstraintName("trigger_contract_ibfk_2");
         });
 
-        modelBuilder.Entity<TriggerLead>(entity =>
+        modelBuilder.Entity<Lead>(entity =>
         {
             entity.HasKey(e => e.LeadId).HasName("PRIMARY");
 
@@ -608,21 +608,21 @@ public partial class ApplicationDbContext : DbContext
                 .HasColumnName("status");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.TriggerLeads)
+            entity.HasOne(d => d.Customer).WithMany(p => p.Leads)
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("trigger_lead_ibfk_1");
 
-            entity.HasOne(d => d.Employee).WithMany(p => p.TriggerLeadEmployees)
+            entity.HasOne(d => d.Employee).WithMany(p => p.LeadEmployees)
                 .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("trigger_lead_ibfk_3");
 
-            entity.HasOne(d => d.User).WithMany(p => p.TriggerLeadUsers)
+            entity.HasOne(d => d.User).WithMany(p => p.LeadUsers)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("trigger_lead_ibfk_2");
         });
 
-        modelBuilder.Entity<TriggerTicket>(entity =>
+        modelBuilder.Entity<Ticket>(entity =>
         {
             entity.HasKey(e => e.TicketId).HasName("PRIMARY");
 
@@ -654,16 +654,16 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("subject");
 
-            entity.HasOne(d => d.Customer).WithMany(p => p.TriggerTickets)
+            entity.HasOne(d => d.Customer).WithMany(p => p.Tickets)
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_ticket_customer");
 
-            entity.HasOne(d => d.Employee).WithMany(p => p.TriggerTicketEmployees)
+            entity.HasOne(d => d.Employee).WithMany(p => p.TicketEmployees)
                 .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("fk_ticket_employee");
 
-            entity.HasOne(d => d.Manager).WithMany(p => p.TriggerTicketManagers)
+            entity.HasOne(d => d.Manager).WithMany(p => p.TicketManagers)
                 .HasForeignKey(d => d.ManagerId)
                 .HasConstraintName("fk_ticket_manager");
         });

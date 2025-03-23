@@ -1,0 +1,39 @@
+@model List<LeadDto>
+
+@{
+    ViewData["Title"] = "Liste des Leads";
+}
+
+<h1Liste des Leads</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Phone</th>
+            <th>Manager</th>
+            <th>Employee</th>
+            <th>Customer</th>
+            <th>Created at</th>
+            <th>Expense</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var lead in Model)
+        {
+            <tr>
+                <td>@lead.LeadId</td>
+                <td>@lead.Name</td>
+                <td>@lead.Status</td>
+                <td>@lead.Phone</td>
+                <td>@lead.ManagerName</td>
+                <td>@lead.EmployeeName</td>
+                <td>@lead.CustomerName</td>
+                <td>@lead.CreatedAt</td>
+                <td>@lead.Expense</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,15 @@
+@* @model Dictionary<string, object>
+
+<h2>Dashboard</h2>
+
+@if (Model.ContainsKey("success") && (bool)Model["success"])
+{
+    <p><strong>Nombre de Clients :</strong> @Model["nbCustomers"]</p>
+    <p><strong>Nombre de Tickets :</strong> @Model["nbTickets"]</p>
+    <p><strong>Nombre de Leads :</strong> @Model["nbLeads"]</p>
+}
+else
+{
+    <p>Impossible de charger les données.</p>
+} *@
+<h2>Dashboard</h2>

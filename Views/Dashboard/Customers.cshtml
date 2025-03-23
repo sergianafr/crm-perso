@@ -1,0 +1,35 @@
+@model List<CustomerDto>
+
+@{
+    ViewData["Title"] = "Liste des Clients";
+}
+
+<h1>Customers</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Country</th>
+            <th>Total budget</th>
+            <th>Total expense</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <td>@customer.Id</td>
+                <td>@customer.Name</td>
+                <td>@customer.Email</td>
+                <td>@customer.Phone</td>
+                <td>@customer.Country</td>
+                <td>@customer.Budget</td>
+                <td>@customer.Expense</td>
+            </tr>
+        }
+    </tbody>
+</table>

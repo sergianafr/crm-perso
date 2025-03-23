@@ -1,3 +1,4 @@
+using crm_perso.Controllers;
 using crm_perso.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -11,6 +12,8 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddHttpClient<DashboardController>();
 
 // Ajouter les services d'authentification
 builder.Services.AddAuthentication(options =>

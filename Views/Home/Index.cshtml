@@ -1,8 +1,88 @@
-﻿@{
+﻿@model DashboardData
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .dashboard-card {
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .dashboard-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+        color: #5b9bd5; /* Icônes bleues */
+    }
+    .card-title {
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+    .card-text {
+        font-size: 2rem;
+        font-weight: 600;
+        color: #333;
+    }
+    .text-success {
+        color: orange;
+    }
+    .text-warning {
+        color: magenta;
+    }
+    .text-info {
+        color: #17a2b8;
+    }
+</style>
+
+<div class="container py-4">
+    <header class="mb-4">
+        <h1 class="text-center">Dashboard</h1>
+    </header>
+
+    <div class="row g-3">
+        <!-- Card 1 -->
+        <div class="col-md-4">
+            <a href="@Url.Action("Customers", "Dashboard")" class="text-decoration-none"> 
+                <div class="card dashboard-card">
+                    <div class="card-body p-4" id="customers">
+                        <div class="text-center">
+                            <i class="fas fa-user dashboard-icon text-info"></i> <!-- Icône non remplie -->
+                        </div>
+                        <h4 class="card-title text-center">Customers</h4>
+                        <h2 class="card-text text-center mb-2">@Model.NbCustomers</h2> <!-- Nombre de clients -->
+                    </div>
+                </div>
+            </a>>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-4">
+            <a href="@Url.Action("Leads", "Dashboard")" class="text-decoration-none"> 
+                <div class="card dashboard-card">
+                    <div class="card-body p-4" id="leads">
+                        <div class="text-center">
+                            <i class="fas fa-user-plus dashboard-icon text-warning"></i>
+                        </div>
+                        <h4 class="card-title text-center">Leads</h4>
+                        <h2 class="card-text text-center mb-2">@Model.NbLeads</h2>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-4">
+            <a href="@Url.Action("Tickets", "Dashboard")" class="text-decoration-none"> <!-- Remplacez "YourControllerName" par le nom de votre contrôleur -->
+                <div class="card dashboard-card" id="tickets">
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <i class="fas fa-ticket-alt dashboard-icon text-success"></i> <!-- Icône non remplie -->
+                        </div>
+                        <h4 class="card-title text-center">Tickets</h4>
+                        <h2 class="card-text text-center mb-2">@Model.NbTickets</h2> <!-- Nombre de tickets -->
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 </div>

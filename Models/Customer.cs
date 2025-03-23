@@ -41,9 +41,9 @@ public partial class Customer
 
     public virtual ICollection<TriggerContract> TriggerContracts { get; set; } = new List<TriggerContract>();
 
-    public virtual ICollection<TriggerLead> TriggerLeads { get; set; } = new List<TriggerLead>();
+    public virtual ICollection<Lead> Leads { get; set; } = new List<Lead>();
 
-    public virtual ICollection<TriggerTicket> TriggerTickets { get; set; } = new List<TriggerTicket>();
+    public virtual ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
 
     public virtual User? User { get; set; }
 }

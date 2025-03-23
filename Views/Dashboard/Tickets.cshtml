@@ -1,0 +1,41 @@
+@model List<TicketDto>
+
+@{
+    ViewData["Title"] = "Liste des Tickets";
+}
+
+<h1>Tickets</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Subject</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Created by</th>
+            <th>Assigned Employee</th>
+            <th>Customer</th>
+            <th>Created At</th>
+            <th>Expense</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ticket in Model)
+        {
+            <tr>
+                <td>@ticket.TicketId</td>
+                <td>@ticket.Subject</td>
+                <td>@ticket.Description</td>
+                <td>@ticket.Status</td>
+                <td>@ticket.Priority</td>
+                <td>@ticket.EmployeeName</td>
+                <td>@ticket.CustomerName</td>
+                <td>@ticket.ManagerName</td>
+                <td>@ticket.CreatedAt</td>
+                <td>@ticket.Expense</td>
+            </tr>
+        }
+    </tbody>
+</table>
