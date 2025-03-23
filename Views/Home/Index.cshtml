@@ -49,10 +49,11 @@
                             <i class="fas fa-user dashboard-icon text-info"></i> <!-- Icône non remplie -->
                         </div>
                         <h4 class="card-title text-center">Customers</h4>
-                        <h2 class="card-text text-center mb-2">@Model.NbCustomers</h2> <!-- Nombre de clients -->
+                        <h2 class="card-text text-center mb-2">@Model.NbCustomers</h2> 
+                        <p class="card-text text-center mb-2">Total budget: @Model.TotalBudgetFormat</p>
                     </div>
                 </div>
-            </a>>
+            </a>
         </div>
 
         <!-- Card 2 -->
@@ -72,7 +73,7 @@
 
         <!-- Card 3 -->
         <div class="col-md-4">
-            <a href="@Url.Action("Tickets", "Dashboard")" class="text-decoration-none"> <!-- Remplacez "YourControllerName" par le nom de votre contrôleur -->
+            <a href="@Url.Action("Tickets", "Dashboard")" class="text-decoration-none">
                 <div class="card dashboard-card" id="tickets">
                     <div class="card-body p-4">
                         <div class="text-center">
@@ -85,4 +86,53 @@
             </a>
         </div>
     </div>
+
+    <!-- Graphique -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card dashboard-card">
+                <div class="card-body">
+                    <h4 class="card-title text-center">Customer Budgets</h4>
+                    <canvas id="customerBudgetChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    // Récupérer les données du modèle
+    var customerBudgets = @Html.Raw(Json.Serialize(Model.CustomerBudget));
+
+    // Préparer les données pour Chart.js
+    var labels = customerBudgets.map(function(customer) {
+        return customer.customerName;
+    });
+
+    var data = customerBudgets.map(function(customer) {
+        return customer.totalAmount;
+    });
+
+    // Créer le graphique
+    var ctx = document.getElementById('customerBudgetChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar', // Type de graphique (bar, line, pie, etc.)
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Amount',
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>

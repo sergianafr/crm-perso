@@ -5,5 +5,8 @@ public class DashboardData
     public int NbCustomers { get; set; }
     public int NbTickets { get; set; }
     public int NbLeads { get; set; }
+    public decimal totalBudget {get; set;}
+    public string TotalBudgetFormat {get; set;}
+    public List<CustomerTBDto> CustomerBudget {get; set;}
 
 }
