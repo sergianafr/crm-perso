@@ -4,49 +4,54 @@
     ViewData["Title"] = "Liste des Leads";
 }
 
-<h1>Liste des Leads</h1>
+<h1 class="mb-4">Liste des Leads</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Phone</th>
-            <th>Manager</th>
-            <th>Employee</th>
-            <th>Customer</th>
-            <th>Created at</th>
-            <th>Expense</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var lead in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
             <tr>
-                <td>@lead.LeadId</td>
-                <td>@lead.Name</td>
-                <td>@lead.Status</td>
-                <td>@lead.Phone</td>
-                <td>@lead.ManagerName</td>
-                <td>@lead.EmployeeName</td>
-                <td>@lead.CustomerName</td>
-                <td>@lead.CreatedAt</td>
-                <td id="expense-@lead.LeadId">@lead.Expense</td>
-                <td>
-                    <a href="#" class="edit-expense" data-id="@lead.LeadId" data-expense="@lead.Expense">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a href="#" class="delete-expense" data-id="@lead.LeadId" data-expense="@lead.Expense">
-                        <i class="fas fa-trash"></i>
-                    </a>
-                </td>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Status</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Manager</th>
+                <th scope="col">Employee</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Created at</th>
+                <th scope="col">Expense</th>
+                <th scope="col">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var lead in Model)
+            {
+                <tr>
+                    <td>@lead.LeadId</td>
+                    <td>@lead.Name</td>
+                    <td>@lead.Status</td>
+                    <td>@lead.Phone</td>
+                    <td>@lead.ManagerName</td>
+                    <td>@lead.EmployeeName</td>
+                    <td>@lead.CustomerName</td>
+                    <td>@lead.CreatedAt</td>
+                    <td id="expense-@lead.LeadId">@lead.Expense</td>
+                    <td>
+                        <div class="d-flex justify-content-around">
+                            <a href="#" class="edit-expense text-primary" data-id="@lead.LeadId" data-expense="@lead.Expense">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#" class="delete-lead text-danger" data-id="@lead.LeadId" data-expense="@lead.Expense">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
-<!-- Modal Bootstrap -->
+<!-- Modal for updating expense -->
 <div class="modal fade" id="expenseModal" tabindex="-1" role="dialog" aria-labelledby="expenseModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -59,7 +64,7 @@
             <div class="modal-body">
                 <input type="hidden" id="leadId">
                 <div class="form-group">
-                    <label for="newExpense">New amount:</label>
+                    <label for="newExpense">New Amount</label>
                     <input type="text" class="form-control" id="newExpense">
                 </div>
             </div>
@@ -75,18 +80,18 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Expense</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Delete Lead</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="leadIdDel">
-                <p>Delete this expense?</p>
+                <p>Are you sure you want to delete this lead?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="deleteExpense">Delete</button>
+                <button type="button" class="btn btn-danger" id="deleteLead">Delete</button>
             </div>
         </div>
     </div>
@@ -104,11 +109,7 @@
 
                 $("#expenseModal").modal("show");
             });
-            $(".delete-expense").click(function(){
-                var leadId = $(this).data("id"); 
-                $("#leadIdDel").val(leadId);
-                $("#deleteModal").modal("show");
-            })
+
             $("#saveExpense").click(function () {
                 var leadId = $("#leadId").val();
                 var newExpense = $("#newExpense").val();
@@ -118,7 +119,7 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    credentials:'include',
+                    credentials: 'include',
                     body: JSON.stringify({ id: leadId, amount: newExpense })
                 })
                 .then(response => {
@@ -133,46 +134,53 @@
                         $("#expense-" + leadId).text(newExpense);
                         $("#expenseModal").modal("hide");
                     } else {
-                        alert("Erreur : " + data.message);
+                        alert("Error: " + data.message);
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    alert("Une erreur s'est produite.");
+                    alert("An error occurred.");
                 });
             });
-            $("#deleteExpense").click(function () {
-                var leadId = $("#leadIdDel").val();
-                var newExpense = '0';
 
-                fetch('http://localhost:8080/api/dashboards/leads/delete-expense', {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials:'include',
-                    body: JSON.stringify({ id: leadId, amount: newExpense })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        console.log(response);
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        $("#expense-" + leadId).text(newExpense);
-                        $("#deleteModal").modal("hide");
-                    } else {
-                        alert("Erreur : " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.log(error);
-                    alert("Une erreur s'est produite.");
-                });
+    // Ouvrir le modal de suppression du lead
+            $(".delete-lead").click(function () {
+                var leadId = $(this).data("id");
+                $("#leadIdDel").val(leadId);
+                $("#deleteModal").modal("show");
+            });
+
+    // Supprimer le lead
+        $("#deleteLead").click(function () {
+            var leadId = $("#leadIdDel").val();
+
+            fetch("http://localhost:8080/api/dashboards/leads/delete/"+leadId, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: 'include',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Supprimer la ligne du tableau
+                    $("#expense-" + leadId).closest("tr").remove();
+                    $("#deleteModal").modal("hide");
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                alert("An error occurred.");
             });
         });
+    });
     </script>
 }

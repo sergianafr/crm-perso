@@ -4,54 +4,56 @@
     ViewData["Title"] = "Liste des Tickets";
 }
 
-<h1>Tickets</h1>
+<h1 class="mb-4">Tickets</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Subject</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Created by</th>
-            <th>Assigned Employee</th>
-            <th>Customer</th>
-            <th>Created At</th>
-            <th>Expense</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var ticket in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
             <tr>
-                <td>@ticket.TicketId</td>
-                <td>@ticket.Subject</td>
-                <td>@ticket.Description</td>
-                <td>@ticket.Status</td>
-                <td>@ticket.Priority</td>
-                <td>@ticket.EmployeeName</td>
-                <td>@ticket.CustomerName</td>
-                <td>@ticket.ManagerName</td>
-                <td>@ticket.CreatedAt</td>
-                <td id="expense-@ticket.TicketId">@ticket.Expense 
-                </td>
-                <td>
-                    <span>
-                        <a href="#" class="edit-expense" data-id="@ticket.TicketId" data-expense="@ticket.Expense">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    </span>
-                    <span>
-                        <a href="#" class="delete-expense" data-id="@ticket.TicketId" data-expense="@ticket.Expense">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </span>
-                </td>
+                <th scope="col">ID</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Description</th>
+                <th scope="col">Status</th>
+                <th scope="col">Priority</th>
+                <th scope="col">Created by</th>
+                <th scope="col">Assigned Employee</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Expense</th>
+                <th scope="col">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var ticket in Model)
+            {
+                <tr>
+                    <td>@ticket.TicketId</td>
+                    <td>@ticket.Subject</td>
+                    <td>@ticket.Description</td>
+                    <td>@ticket.Status</td>
+                    <td>@ticket.Priority</td>
+                    <td>@ticket.EmployeeName</td>
+                    <td>@ticket.CustomerName</td>
+                    <td>@ticket.ManagerName</td>
+                    <td>@ticket.CreatedAt</td>
+                    <td id="expense-@ticket.TicketId">@ticket.Expense</td>
+                    <td>
+                        <div class="d-flex justify-content-around">
+                            <a href="#" class="edit-expense text-primary" data-id="@ticket.TicketId" data-expense="@ticket.Expense">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#" class="delete-ticket text-danger" data-id="@ticket.TicketId" data-expense="@ticket.Expense">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for updating expense -->
 <div class="modal fade" id="expenseModal" tabindex="-1" role="dialog" aria-labelledby="expenseModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -75,26 +77,29 @@
         </div>
     </div>
 </div>
+
+<!-- Modal for deleting expense -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Expense</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Delete Ticket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="ticketIdDel">
-                <p>Delete this expense?</p>
+                <p>Are you sure you want to delete this ticket?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="deleteExpense">Delete</button>
+                <button type="button" class="btn btn-danger" id="deleteTicket">Delete</button>
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script>
         $(document).ready(function () {
@@ -107,9 +112,9 @@
 
                 $("#expenseModal").modal("show");
             });
-            $(".delete-expense").click(function () {
-                var ticketId = $(this).data("id");
 
+            $(".delete-ticket").click(function () {
+                var ticketId = $(this).data("id");
                 $("#ticketIdDel").val(ticketId);
                 $("#deleteModal").modal("show");
             });
@@ -123,7 +128,7 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    credentials:'include',
+                    credentials: 'include',
                     body: JSON.stringify({ id: ticketId, amount: newExpense })
                 })
                 .then(response => {
@@ -138,44 +143,43 @@
                         $("#expense-" + ticketId).text(newExpense);
                         $("#expenseModal").modal("hide");
                     } else {
-                        alert("Erreur : " + data.message);
+                        alert("Error: " + data.message);
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    alert("Une erreur s'est produite.");
+                    alert("An error occurred.");
                 });
             });
-            $("#deleteExpense").click(function () {
-                var ticketId = $("#ticketIdDel").val();
-                var newExpense = '0';
 
-                fetch('http://localhost:8080/api/dashboards/tickets/delete-expense', {
+            $("#deleteTicket").click(function () {
+                var ticketId = $("#ticketIdDel").val();
+
+                fetch("http://localhost:8080/api/dashboards/tickets/delete/"+ticketId, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    credentials:'include',
-                    body: JSON.stringify({ id: ticketId, amount: newExpense })
+                    credentials: 'include',
                 })
                 .then(response => {
                     if (!response.ok) {
-                        console.log(response);
                         throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
                 .then(data => {
                     if (data.success) {
-                        $("#expense-" + ticketId).text(newExpense);
+                        // Supprimer la ligne du tableau
+                        $("#expense-" + ticketId).closest("tr").remove();
                         $("#deleteModal").modal("hide");
                     } else {
-                        alert("Erreur : " + data.message);
+                        alert("Error: " + data.message);
                     }
                 })
                 .catch(error => {
                     console.log(error);
-                    alert("Une erreur s'est produite.");
+                    alert("An error occurred.");
                 });
             });
         });
