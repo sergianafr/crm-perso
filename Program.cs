@@ -8,6 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Ajouter les services au conteneur
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddSession(options => {
+    options.IdleTimeout = TimeSpan.FromMinutes(20); // Durée de vie
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 // Configuration de la connexion à MySQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -31,6 +37,8 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+app.UseSession();
+
 // Configurer le pipeline de requêtes HTTP
 if (!app.Environment.IsDevelopment())
 {
@@ -53,6 +61,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Login}/{action=Index}");
+    pattern: "{controller=Auth}/{action=Index}");
 
 app.Run();

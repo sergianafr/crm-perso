@@ -9,12 +9,10 @@ public class CustomerTBDto
     public string CustomerCountry { get; set; }
     public decimal TotalAmount { get; set; }
 
-    // Constructeur par défaut
     public CustomerTBDto()
     {
     }
 
-    // Constructeur avec tous les paramètres
     public CustomerTBDto(int customerId, string customerName, string customerCountry, decimal totalAmount)
     {
         CustomerId = customerId;

@@ -58,7 +58,6 @@ bower_components/
 jspm_packages/
 
 # Fichiers de packages front-end
-lib/
 dist/
 
 # Fichiers de base de données locale
