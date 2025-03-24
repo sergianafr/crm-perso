@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using crm_perso.Models;
 using crm_perso.Extensions;
+// using crm_perso.Filters;
 namespace crm_perso.Controllers;
+
+// [TypeFilter(typeof(AuthSessionFilter))]
 public class DashboardController : Controller
 {
     private readonly HttpClient _httpClient;

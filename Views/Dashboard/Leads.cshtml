@@ -1,3 +1,4 @@
+@using crm_perso.Extensions
 @model List<LeadDto>
 
 @{
@@ -99,6 +100,7 @@
 
 @section Scripts {
     <script>
+        const currentUserId = @Json.Serialize(Context.Session.GetObject<UserWRole>("CurrentUser")?.id);
         $(document).ready(function () {
             $(".edit-expense").click(function () {
                 var leadId = $(this).data("id");
@@ -114,13 +116,13 @@
                 var leadId = $("#leadId").val();
                 var newExpense = $("#newExpense").val();
 
-                fetch('http://localhost:8080/api/dashboards/leads/update-expense', {
+                fetch('http://localhost:8080/api/dashboards/leads/update/'+currentUserId, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     credentials: 'include',
-                    body: JSON.stringify({ id: leadId, amount: newExpense })
+                    body: JSON.stringify({ idUser: leadId, amount: newExpense })
                 })
                 .then(response => {
                     if (!response.ok) {
