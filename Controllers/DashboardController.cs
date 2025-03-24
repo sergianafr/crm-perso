@@ -42,12 +42,11 @@ public class DashboardController : Controller
     {
         try
         {
-            string apiUrl = "http://localhost:8080/api/dashboards/o"; // URL de ton API Spring Boot
+            string apiUrl = "http://localhost:8080/api/dashboards/o"; 
             HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
 
             if (response.IsSuccessStatusCode)
             {
-                // Lire la réponse JSON et la désérialiser en dictionnaire
                 var jsonString = await response.Content.ReadAsStringAsync();
                 // var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
                 Console.WriteLine(jsonString);

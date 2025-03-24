@@ -44,12 +44,15 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Activer l'authentification (doit être placé avant UseAuthorization)
 app.UseAuthentication();
 app.UseAuthorization();
 
+// app.MapControllerRoute(
+//     name: "default",
+//     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}");
 
 app.Run();
