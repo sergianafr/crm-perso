@@ -11,6 +11,10 @@ public class DashboardData
     public string TotalExpense {get; set;}
     public string TotalExpenseFormat {get; set;}
     public List<CustomerTBDto> CustomerExpense {get; set;}
-
+    public decimal ExpenseLead {get; set;}
+    public string ExpenseLeadFormat {get; set;}
+    public decimal ExpenseTicket {get; set;}
+    public string ExpenseTicketFormat {get; set;}
+    public List<Evolution> EvolutionByDate {get; set;}
 
 }
