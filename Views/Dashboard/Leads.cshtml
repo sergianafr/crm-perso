@@ -116,13 +116,13 @@
                 var leadId = $("#leadId").val();
                 var newExpense = $("#newExpense").val();
 
-                fetch('http://localhost:8080/api/dashboards/leads/update/'+currentUserId, {
+                fetch('http://localhost:8080/api/dashboards/leads/update/'+leadId, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     credentials: 'include',
-                    body: JSON.stringify({ idUser: leadId, amount: newExpense })
+                    body: JSON.stringify({ idUser: currentUserId, amount: newExpense })
                 })
                 .then(response => {
                     if (!response.ok) {

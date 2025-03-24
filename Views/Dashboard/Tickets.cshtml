@@ -1,3 +1,4 @@
+@using crm_perso.Extensions
 @model List<TicketDto>
 
 @{
@@ -101,7 +102,9 @@
 </div>
 
 @section Scripts {
+
     <script>
+        const currentUserId = @Json.Serialize(Context.Session.GetObject<UserWRole>("CurrentUser")?.id);
         $(document).ready(function () {
             $(".edit-expense").click(function () {
                 var ticketId = $(this).data("id");
@@ -123,13 +126,13 @@
                 var ticketId = $("#ticketId").val();
                 var newExpense = $("#newExpense").val();
 
-                fetch('http://localhost:8080/api/dashboards/tickets/update-expense', {
+                fetch('http://localhost:8080/api/dashboards/tickets/update/'+ticketId, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     credentials: 'include',
-                    body: JSON.stringify({ id: ticketId, amount: newExpense })
+                    body: JSON.stringify({ idUser: currentUserId, amount: newExpense })
                 })
                 .then(response => {
                     if (!response.ok) {
