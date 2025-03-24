@@ -32,6 +32,9 @@
     .text-info {
         color: #17a2b8;
     }
+    .rate{
+        color:rgb(250, 208, 92);
+    }
 </style>
 
 <div class="container py-4">
@@ -40,8 +43,23 @@
     </header>
 
     <div class="row g-3">
+        <div class="col-md-3">
+            <a href="@Url.Action("Rate", "Home")" class="text-decoration-none"> 
+                <div class="card dashboard-card h-100">
+                    <div class="card-body d-flex flex-column p-3">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-percent dashboard-icon rate"></i>
+                        </div>
+                        <h4 class="card-title text-center mb-3">Rate</h4>
+                        <div class="text-center mt-auto">
+                            <h2 class="card-text mb-2">@Model.Rate %</h2> 
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
         <!-- Card 1 -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             <a href="@Url.Action("Customers", "Dashboard")" class="text-decoration-none"> 
                 <div class="card dashboard-card h-100">
                     <div class="card-body d-flex flex-column p-3">
@@ -60,7 +78,7 @@
         </div>
 
         <!-- Card 2 -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             <a href="@Url.Action("Leads", "Dashboard")" class="text-decoration-none"> 
                 <div class="card dashboard-card h-100">
                     <div class="card-body d-flex flex-column p-3">
@@ -78,7 +96,7 @@
         </div>
 
         <!-- Card 3 -->
-        <div class="col-md-4">
+        <div class="col-md-3">
             <a href="@Url.Action("Tickets", "Dashboard")" class="text-decoration-none">
                 <div class="card dashboard-card h-100">
                     <div class="card-body d-flex flex-column p-3">

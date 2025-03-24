@@ -1,50 +1,64 @@
 @{
-    ViewData["Title"] = "Rate configuration";
+    ViewData["Title"] = "Rate Configuration";
 }
-<h1>@ViewData["Title"]</h1>
 
-<form action="" id="rateForm" method="post">
-    <div class="form-group">
-        <label for="rate">Rate:</label>
-        <input type="number" step="0.01" class="form-control" id="rate" name="rate" />
+<div class="card h-100">
+    <div class="card-body">
+        <h1>@ViewData["Title"]</h1>
+        <form id="rateForm" method="post">
+            <div class="form-group">
+                <input type="number" step="0.01" class="form-control" id="rate" name="rate" required />
+                <small class="form-text text-muted">Enter the rate value (e.g., 5.25 for 5.25%).</small>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Save Rate</button>
+        </form>
+        <div id="message" class="alert mt-4" style="display: none;"></div>
     </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
+</div>
+
 <script>
     document.getElementById('rateForm').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent page reload
 
         const rate = document.getElementById('rate').value;
-        console.log(rate);
+        const messageDiv = document.getElementById('message');
+
+        // Clear previous messages
+        messageDiv.style.display = 'none';
+        messageDiv.textContent = '';
 
         fetch('http://localhost:8080/api/rate/save', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            credentials:'include',
-            body: JSON.stringify({ rate: rate })
+            credentials: 'include',
+            body: JSON.stringify({ rate: parseFloat(rate) }) // Ensure rate is a number
         })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.json(); // Parser la réponse en JSON
-                })
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
-                    alert('Rate saved successfully');
+                    messageDiv.textContent = 'Rate saved successfully!';
+                    messageDiv.classList.remove('alert-danger');
+                    messageDiv.classList.add('alert-success');
                 } else {
-                    alert('An error occurred while saving the rate');
+                    messageDiv.textContent = 'An error occurred while saving the rate.';
+                    messageDiv.classList.remove('alert-success');
+                    messageDiv.classList.add('alert-danger');
                 }
+                messageDiv.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                messageDiv.textContent = 'Failed to save the rate. Please try again.';
+                messageDiv.classList.remove('alert-success');
+                messageDiv.classList.add('alert-danger');
+                messageDiv.style.display = 'block';
             });
     });
-
-    @* function getCsrfToken() {
-        console.log(document.cookie);
-    return document.cookie
-        .split('; ')
-        .find(row => row.startsWith('XSRF-TOKEN='))
-        .split('=')[1];
-    } *@
 </script>

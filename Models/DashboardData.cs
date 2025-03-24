@@ -16,5 +16,6 @@ public class DashboardData
     public decimal ExpenseTicket {get; set;}
     public string ExpenseTicketFormat {get; set;}
     public List<Evolution> EvolutionByDate {get; set;}
+    public decimal Rate {get; set;} 
 
 }
