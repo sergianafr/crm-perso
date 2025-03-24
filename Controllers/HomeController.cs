@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
+using crm_perso.Extensions;
 
 namespace crm_perso.Controllers;
 
@@ -19,6 +20,9 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
+        if(!HttpContext.IsAuthenticated()){
+            return View("~/Views/Shared/AccessDenied.cshtml");
+        }
         try
         {
             string apiUrl = "http://localhost:8080/api/dashboards/"; // URL de ton API Spring Boot

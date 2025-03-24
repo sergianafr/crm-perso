@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
 using crm_perso.Models;
-
+using crm_perso.Extensions;
 namespace crm_perso.Controllers;
 public class DashboardController : Controller
 {
@@ -40,6 +40,9 @@ public class DashboardController : Controller
     // }
     public async Task<IActionResult> Index()
     {
+        if(!HttpContext.IsAuthenticated()){
+            return View("~/Views/Shared/AccessDenied.cshtml");
+        }
         try
         {
             string apiUrl = "http://localhost:8080/api/dashboards/o"; 
@@ -65,6 +68,9 @@ public class DashboardController : Controller
     }
     public async Task<IActionResult> Tickets()
     {
+        if(!HttpContext.IsAuthenticated()){
+            return View("~/Views/Shared/AccessDenied.cshtml");
+        }
         try
         {
             string apiUrl = "http://localhost:8080/api/dashboards/tickets"; // URL de ton API Spring Boot
@@ -87,6 +93,9 @@ public class DashboardController : Controller
     }
     public async Task<IActionResult> Leads()
     {
+        if(!HttpContext.IsAuthenticated()){
+            return View("~/Views/Shared/AccessDenied.cshtml");
+        }
         try
         {
             string apiUrl = "http://localhost:8080/api/dashboards/leads"; 
@@ -104,6 +113,9 @@ public class DashboardController : Controller
     }
     public async Task<IActionResult> Customers()
     {
+        if(!HttpContext.IsAuthenticated()){
+            return View("~/Views/Shared/AccessDenied.cshtml");
+        }
         try
         {
             string apiUrl = "http://localhost:8080/api/dashboards/customers"; 

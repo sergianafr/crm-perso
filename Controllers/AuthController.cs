@@ -46,6 +46,7 @@ namespace crm_perso.Controllers
                     
                     HttpContext.Session.SetObject("CurrentUser", userData);
                     HttpContext.Session.SetString("UserEmail", email);
+                    // HttpContext.Session.SetObject<Boolean>("Authenticated", true);
                     Console.WriteLine(HttpContext.Session.GetObject<UserWRole>("CurrentUser").role);
                     
                     return RedirectToAction("Index", "Home");
@@ -70,6 +71,11 @@ namespace crm_perso.Controllers
                 ModelState.AddModelError(string.Empty, "Erreur lors de la communication avec le serveur");
                 return View("Index");
             }
+        }
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Auth");
         }
     }
 }

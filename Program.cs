@@ -1,12 +1,15 @@
 using crm_perso.Controllers;
 using crm_perso.Data;
+using crm_perso.Filters;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Ajouter les services au conteneur
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options => {
+     options.Filters.Add(new AuthSessionFilter());
+});
 
 builder.Services.AddSession(options => {
     options.IdleTimeout = TimeSpan.FromMinutes(20); // Durée de vie
