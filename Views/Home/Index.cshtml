@@ -1,280 +1,377 @@
 ﻿@model DashboardData
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
 <style>
     .dashboard-card {
         border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 1px solid #dee2e6; /* Bordure légère */
+        transition: transform 0.2s;
+        background-color: white; /* Fond blanc */
     }
+    
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+        background-color: transparent; /* Suppression du fond bleu */
+        color: #2c3e50; /* Texte sombre */
+        border-bottom: 1px solid #dee2e6; /* Ligne de séparation */
+        padding: 1rem;
+        font-weight: 600;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
     .dashboard-icon {
-        font-size: 40px;
-        margin-bottom: 15px;
-        color: #5b9bd5; /* Icônes bleues */
+        font-size: 2rem;
+        margin-right: 0.5rem;
+        color: #3498db; /* Bleu pour les icônes */
     }
-    .card-title {
-        font-weight: bold;
-        font-size: 1.25rem;
-    }
-    .card-text {
+    
+    .card-value {
         font-size: 2rem;
         font-weight: 600;
-        color: #333;
+        color: #2c3e50;
     }
-    .text-success {
-        color: orange;
+    
+    .card-label {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        margin-bottom: 0.3rem;
     }
-    .text-warning {
-        color: magenta;
+    
+    .card-footer {
+        background-color: transparent;
+        border-top: 1px solid #dee2e6;
     }
-    .text-info {
-        color: #17a2b8;
+    
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
     }
-    .rate{
-        color:rgb(250, 208, 92);
-    }
+    
+    /* Couleurs spécifiques */
+    .rate-color { color: #f39c12; } /* Orange pour le rate */
+    .customers-color { color: #3498db; } /* Bleu pour customers */
+    .leads-color { color: #9b59b6; } /* Violet pour leads */
+    .tickets-color { color: #2ecc71; } /* Vert pour tickets */
 </style>
 
-<div class="container py-4">
-    <header class="mb-4">
-        <h1 class="text-center">Dashboard</h1>
-    </header>
-
-    <div class="row g-3">
-        <div class="col-md-3">
-            <a href="@Url.Action("Rate", "Home")" class="text-decoration-none"> 
-                <div class="card dashboard-card h-100">
-                    <div class="card-body d-flex flex-column p-3">
-                        <div class="text-center mb-3">
-                            <i class="fas fa-percent dashboard-icon rate"></i>
-                        </div>
-                        <h4 class="card-title text-center mb-3">Rate</h4>
-                        <div class="text-center mt-auto">
-                            <h2 class="card-text mb-2">@Model.Rate %</h2> 
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <!-- Card 1 -->
-        <div class="col-md-3">
-            <a href="@Url.Action("Customers", "Dashboard")" class="text-decoration-none"> 
-                <div class="card dashboard-card h-100">
-                    <div class="card-body d-flex flex-column p-3">
-                        <div class="text-center mb-3">
-                            <i class="fas fa-user dashboard-icon text-info"></i>
-                        </div>
-                        <h4 class="card-title text-center mb-3">Customers</h4>
-                        <div class="text-center mt-auto">
-                            <h2 class="card-text mb-2">@Model.NbCustomers</h2> 
-                            <p class="card-text-mb-1"><span>Total budget:</span> @Model.TotalBudgetFormat</p>
-                            <p class="card-text-mb-0"><span>Total expense:</span> @Model.TotalExpenseFormat</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="col-md-3">
-            <a href="@Url.Action("Leads", "Dashboard")" class="text-decoration-none"> 
-                <div class="card dashboard-card h-100">
-                    <div class="card-body d-flex flex-column p-3">
-                        <div class="text-center mb-3">
-                            <i class="fas fa-user-plus dashboard-icon text-warning"></i>
-                        </div>
-                        <h4 class="card-title text-center mb-3">Leads</h4>
-                        <div class="text-center mt-auto">
-                            <h2 class="card-text mb-0">@Model.NbLeads</h2>
-                            <p class="card-text-mb-10">Total expense: @Model.ExpenseLeadFormat</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="col-md-3">
-            <a href="@Url.Action("Tickets", "Dashboard")" class="text-decoration-none">
-                <div class="card dashboard-card h-100">
-                    <div class="card-body d-flex flex-column p-3">
-                        <div class="text-center mb-3">
-                            <i class="fas fa-ticket-alt dashboard-icon text-success"></i>
-                        </div>
-                        <h4 class="card-title text-center mb-3">Tickets</h4>
-                        <div class="text-center mt-auto">
-                            <h2 class="card-text mb-0">@Model.NbTickets</h2>
-                            <p class="card-text-mb-10">Total expense: @Model.ExpenseTicketFormat</p>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0 text-dark"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
     </div>
 
-    <!-- Graphiques côte à côte -->
-    <div class="row mt-4">
-        <!-- Graphique des budgets -->
-        <div class="col-md-6">
-            <div class="card dashboard-card">
-                <div class="card-body">
-                    <h4 class="card-title text-center">Customer Budgets</h4>
-                    <canvas id="customerBudgetChart"></canvas>
+    <!-- Cards Row -->
+    <div class="row g-4 mb-4">
+        <!-- Rate Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card shadow-sm h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-percent dashboard-icon rate-color"></i>
+                    <h5 class="mb-0">Rate</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="card-value rate-color">@Model.Rate %</div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="@Url.Action("Rate", "Home")" class="btn btn-sm btn-outline-primary">View Details</a>
                 </div>
             </div>
         </div>
 
-        <!-- Graphique des dépenses -->
-        <div class="col-md-6">
-            <div class="card dashboard-card">
+        <!-- Customers Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card shadow-sm h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-users dashboard-icon customers-color"></i>
+                    <h5 class="mb-0">Customers</h5>
+                </div>
                 <div class="card-body">
-                    <h4 class="card-title text-center">Customer Expenses</h4>
-                    <canvas id="customerExpenseChart"></canvas>
+                    <div class="card-value customers-color">@Model.NbCustomers</div>
+                    <div class="card-label">Total Budget: @Model.TotalBudgetFormat</div>
+                    <div class="card-label">Total Expense: @Model.TotalExpenseFormat</div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="@Url.Action("Customers", "Dashboard")" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leads Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card shadow-sm h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-user-plus dashboard-icon leads-color"></i>
+                    <h5 class="mb-0">Leads</h5>
+                </div>
+                <div class="card-body">
+                    <div class="card-value leads-color">@Model.NbLeads</div>
+                    <div class="card-label">Total Expense: @Model.ExpenseLeadFormat</div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="@Url.Action("Leads", "Dashboard")" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tickets Card -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card dashboard-card shadow-sm h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-ticket-alt dashboard-icon tickets-color"></i>
+                    <h5 class="mb-0">Tickets</h5>
+                </div>
+                <div class="card-body">
+                    <div class="card-value tickets-color">@Model.NbTickets</div>
+                    <div class="card-label">Total Expense: @Model.ExpenseTicketFormat</div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="@Url.Action("Tickets", "Dashboard")" class="btn btn-sm btn-outline-primary">View All</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Graphique d'évolution des budgets et dépenses -->
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="card dashboard-card">
+    <!-- Charts Row -->
+    <div class="row g-4 mb-4">
+        <!-- Budget Chart -->
+        <div class="col-lg-6">
+            <div class="card dashboard-card shadow-sm h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-wallet dashboard-icon"></i>
+                    <h5 class="mb-0">Customer Budgets</h5>
+                </div>
                 <div class="card-body">
-                    <h4 class="card-title text-center">Evolution of Budgets and Expenses</h4>
-                    <canvas id="evolutionChart"></canvas>
+                    <div class="chart-container">
+                        <canvas id="customerBudgetChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expense Chart -->
+        <div class="col-lg-6">
+            <div class="card dashboard-card shadow-sm h-100">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-money-bill-wave dashboard-icon"></i>
+                    <h5 class="mb-0">Customer Expenses</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="customerExpenseChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evolution Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-chart-line dashboard-icon"></i>
+                    <h5 class="mb-0">Evolution of Budgets</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="height: 350px;">
+                        <canvas id="evolutionChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
 
-<script>
- 
-    // Récupérer les données du modèle
-    var customerBudgets = @Html.Raw(Json.Serialize(Model.CustomerBudget));
-    var customerExpenses = @Html.Raw(Json.Serialize(Model.CustomerExpense));
-    var evolutionData = @Html.Raw(Json.Serialize(Model.EvolutionByDate));
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
 
-    // Préparer les données pour les budgets
-    var budgetLabels = customerBudgets.map(function(customer) {
-        return customer.customerName;
-    });
+    <script>
+        // Récupérer les données du modèle
+        var customerBudgets = @Html.Raw(Json.Serialize(Model.CustomerBudget));
+        var customerExpenses = @Html.Raw(Json.Serialize(Model.CustomerExpense));
+        var evolutionData = @Html.Raw(Json.Serialize(Model.EvolutionByDate));
 
-    var budgetData = customerBudgets.map(function(customer) {
-        return customer.totalAmount;
-    });
+        // Préparer les données pour les budgets
+        var budgetLabels = customerBudgets.map(function(customer) {
+            return customer.customerName;
+        });
 
-    // Préparer les données pour les dépenses
-    var expenseLabels = customerExpenses.map(function(customer) {
-        return customer.customerName;
-    });
+        var budgetData = customerBudgets.map(function(customer) {
+            return customer.totalAmount;
+        });
 
-    var expenseData = customerExpenses.map(function(customer) {
-        return customer.totalAmount;
-    });
+        // Préparer les données pour les dépenses
+        var expenseLabels = customerExpenses.map(function(customer) {
+            return customer.customerName;
+        });
 
-    // Préparer les données pour l'évolution
-    var evolutionLabels = evolutionData.map(function(evo) {
-        return new Date(evo.date); // Convertir la date en objet Date
-    });
+        var expenseData = customerExpenses.map(function(customer) {
+            return customer.totalAmount;
+        });
 
+        // Préparer les données pour l'évolution
+        var evolutionLabels = evolutionData.map(function(evo) {
+            return new Date(evo.date);
+        });
 
-    var evolutionExpenseData = evolutionData.map(function(evo) {
-        return evo.amountExpense;
-    });
+        var evolutionExpenseData = evolutionData.map(function(evo) {
+            return evo.amountExpense;
+        });
 
-    var evolutionBudgetData = evolutionData.map(function(evo) {
-        return evo.amountBudget;
-    });
+        var evolutionBudgetData = evolutionData.map(function(evo) {
+            return evo.amountBudget;
+        });
 
-    // Créer le graphique des budgets
-    var budgetCtx = document.getElementById('customerBudgetChart').getContext('2d');
-    var budgetChart = new Chart(budgetCtx, {
-        type: 'bar',
-        data: {
-            labels: budgetLabels,
-            datasets: [{
-                label: 'Total Budget',
-                data: budgetData,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+        // Chart colors
+        const primaryColor = '#3498db';
+        const successColor = '#2ecc71';
+        const dangerColor = '#e74c3c';
+        const warningColor = '#f39c12';
 
-    // Créer le graphique des dépenses
-    var expenseCtx = document.getElementById('customerExpenseChart').getContext('2d');
-    var expenseChart = new Chart(expenseCtx, {
-        type: 'bar',
-        data: {
-            labels: expenseLabels,
-            datasets: [{
-                label: 'Total Expense',
-                data: expenseData,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-var evolutionCtx = document.getElementById('evolutionChart').getContext('2d');
-var evolutionChart = new Chart(evolutionCtx, {
-    type: 'line',
-    data: {
-        labels: evolutionLabels,
-        datasets: [
-            {
-                label: 'Expenses',
-                data: evolutionExpenseData,
-                borderColor: 'rgba(255, 99, 132, 1)', // Red for expenses
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderWidth: 2
+        // Budget Chart
+        var budgetCtx = document.getElementById('customerBudgetChart').getContext('2d');
+        var budgetChart = new Chart(budgetCtx, {
+            type: 'bar',
+            data: {
+                labels: budgetLabels,
+                datasets: [{
+                    label: 'Total Budget',
+                    data: budgetData,
+                    backgroundColor: primaryColor,
+                    borderColor: primaryColor,
+                    borderWidth: 1
+                }]
             },
-            {
-                label: 'Budgets',
-                data: evolutionBudgetData,
-                borderColor: 'rgba(75, 192, 192, 1)', // Blue for budgets
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderWidth: 2
-            }
-        ]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            },
-            x: {
-                type: 'time', // Use time scale for the X-axis
-                time: {
-                    unit: 'day', // Display data by day
-                    tooltipFormat: 'MMM dd, yyyy HH:mm:ss', // Format for tooltips
-                    displayFormats: {
-                        day: 'MMM dd, yyyy' // Format for axis labels
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
-        }
-    }
-});
-</script>
+        });
+
+        // Expense Chart
+        var expenseCtx = document.getElementById('customerExpenseChart').getContext('2d');
+        var expenseChart = new Chart(expenseCtx, {
+            type: 'bar',
+            data: {
+                labels: expenseLabels,
+                datasets: [{
+                    label: 'Total Expense',
+                    data: expenseData,
+                    backgroundColor: dangerColor,
+                    borderColor: dangerColor,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Evolution Chart
+        var evolutionCtx = document.getElementById('evolutionChart').getContext('2d');
+        var evolutionChart = new Chart(evolutionCtx, {
+            type: 'line',
+            data: {
+                labels: evolutionLabels,
+                datasets: [
+                    @* {
+                        label: 'Expenses',
+                        data: evolutionExpenseData,
+                        borderColor: dangerColor,
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }, *@
+                    {
+                        label: 'Budgets',
+                        data: evolutionBudgetData,
+                        borderColor: successColor,
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            tooltipFormat: 'MMM dd, yyyy',
+                            displayFormats: {
+                                day: 'MMM dd'
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

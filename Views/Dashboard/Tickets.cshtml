@@ -5,108 +5,320 @@
     ViewData["Title"] = "Liste des Tickets";
 }
 
-<h1 class="mb-4">Tickets</h1>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Tickets</h2>
+        @* <a href="#" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> New Ticket
+        </a> *@
+    </div>
 
-<div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Subject</th>
-                <th scope="col">Description</th>
-                <th scope="col">Status</th>
-                <th scope="col">Priority</th>
-                <th scope="col">Created by</th>
-                <th scope="col">Assigned Employee</th>
-                <th scope="col">Customer</th>
-                <th scope="col">Created At</th>
-                <th scope="col">Expense</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ticket in Model)
-            {
-                <tr>
-                    <td>@ticket.TicketId</td>
-                    <td>@ticket.Subject</td>
-                    <td>@ticket.Description</td>
-                    <td>@ticket.Status</td>
-                    <td>@ticket.Priority</td>
-                    <td>@ticket.EmployeeName</td>
-                    <td>@ticket.CustomerName</td>
-                    <td>@ticket.ManagerName</td>
-                    <td>@ticket.CreatedAt</td>
-                    <td id="expense-@ticket.TicketId">@ticket.Expense</td>
-                    <td>
-                        <div class="d-flex justify-content-around">
-                            <a href="#" class="edit-expense text-primary" data-id="@ticket.TicketId" data-expense="@ticket.Expense">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="#" class="delete-ticket text-danger" data-id="@ticket.TicketId" data-expense="@ticket.Expense">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="card shadow-sm">
+        <div class="card-header bg-white border-bottom">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0">Ticket List</h5>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search tickets...">
+                        <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="ticketsTable">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="ps-4">ID</th>
+                            <th scope="col">Subject</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Created By</th>
+                            <th scope="col">Assigned To</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Created At</th>
+                            <th scope="col" class="text-end">Expense</th>
+                            <th scope="col" class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        @foreach (var ticket in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">@ticket.TicketId</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @* <div class="avatar avatar-sm me-3 bg-primary bg-opacity-10">
+                                            <i class="fas fa-ticket-alt text-primary"></i>
+                                        </div> *@
+                                        <span>@ticket.Subject</span>
+                                    </div>
+                                </td>
+                                <td class="text-truncate" style="max-width: 200px;" title="@ticket.Description">
+                                    @ticket.Description
+                                </td>
+                                <td>
+                                    <span class="badge @GetStatusBadgeClass(ticket.Status)">
+                                        @ticket.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge @GetPriorityBadgeClass(ticket.Priority)">
+                                        @ticket.Priority
+                                    </span>
+                                </td>
+                                <td>@ticket.EmployeeName</td>
+                                <td>@ticket.ManagerName</td>
+                                <td>@ticket.CustomerName</td>
+                                <td>@ticket.CreatedAt</td>
+                                <td class="text-end text-danger fw-bold" id="expense-@ticket.TicketId">@ticket.Expense</td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a href="#" class="btn btn-sm btn-outline-primary edit-expense" 
+                                           data-id="@ticket.TicketId" data-expense="@ticket.Expense" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-sm btn-outline-danger delete-ticket" 
+                                           data-id="@ticket.TicketId" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer bg-white border-top">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <span id="paginationInfo">Showing 1 to 10 of @Model.Count entries</span>
+                </div>
+                <div class="col-md-6">
+                    <nav aria-label="Page navigation" class="float-md-end">
+                        <ul class="pagination mb-0" id="pagination">
+                            <!-- Pagination will be generated by jQuery -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal for updating expense -->
-<div class="modal fade" id="expenseModal" tabindex="-1" role="dialog" aria-labelledby="expenseModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="expenseModal" tabindex="-1" aria-labelledby="expenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="expenseModalLabel">Update Expense</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="ticketId">
-                <div class="form-group">
-                    <label for="newExpense">New Amount</label>
-                    <input type="text" class="form-control" id="newExpense">
+                <div class="mb-3">
+                    <label for="newExpense" class="form-label">New Amount</label>
+                    <input type="number" class="form-control" id="newExpense" required>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" id="saveExpense">Save</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal for deleting expense -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title" id="deleteModalLabel">Delete Ticket</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="ticketIdDel">
                 <p>Are you sure you want to delete this ticket?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger" id="deleteTicket">Delete</button>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts {
+<!-- Toast Notification -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto" id="toastTitle">Notification</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage"></div>
+    </div>
+</div>
 
+@section Scripts {
     <script>
-        const currentUserId = @Json.Serialize(Context.Session.GetObject<UserWRole>("CurrentUser")?.id);
-        $(document).ready(function () {
-            $(".edit-expense").click(function () {
+        $(document).ready(function() {
+            const currentUserId = @Json.Serialize(Context.Session.GetObject<UserWRole>("CurrentUser")?.id);
+            
+            // Initialize toast
+            const toastLiveExample = document.getElementById('liveToast');
+            const toast = new bootstrap.Toast(toastLiveExample);
+            
+            function showToast(title, message, isSuccess = true) {
+                $('#toastTitle').text(title);
+                $('#toastMessage').text(message);
+                $('.toast-header').removeClass('bg-success bg-danger');
+                
+                if (isSuccess) {
+                    $('.toast-header').addClass('bg-success text-white');
+                } else {
+                    $('.toast-header').addClass('bg-danger text-white');
+                }
+                
+                toast.show();
+            }
+            
+            // Pagination configuration
+            const rowsPerPage = 10;
+            let $rows = $('#tableBody tr');
+            const totalRows = $rows.length;
+            const pageCount = Math.ceil(totalRows / rowsPerPage);
+            let currentPage = 1;
+
+            // Initialize pagination
+            function initPagination() {
+                $('#pagination').empty();
+                
+                // Previous button
+                $('#pagination').append(
+                    `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
+                    </li>`
+                );
+
+                // Page numbers
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(pageCount, startPage + maxVisiblePages - 1);
+
+                if (endPage - startPage < maxVisiblePages - 1) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+
+                if (startPage > 1) {
+                    $('#pagination').append(
+                        `<li class="page-item">
+                            <a class="page-link" href="#" data-page="1">1</a>
+                        </li>`
+                    );
+                    if (startPage > 2) {
+                        $('#pagination').append(
+                            `<li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>`
+                        );
+                    }
+                }
+
+                for (let i = startPage; i <= endPage; i++) {
+                    $('#pagination').append(
+                        `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>`
+                    );
+                }
+
+                if (endPage < pageCount) {
+                    if (endPage < pageCount - 1) {
+                        $('#pagination').append(
+                            `<li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>`
+                        );
+                    }
+                    $('#pagination').append(
+                        `<li class="page-item">
+                            <a class="page-link" href="#" data-page="${pageCount}">${pageCount}</a>
+                        </li>`
+                    );
+                }
+
+                // Next button
+                $('#pagination').append(
+                    `<li class="page-item ${currentPage === pageCount ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
+                    </li>`
+                );
+
+                updatePaginationInfo();
+            }
+
+            // Update pagination info text
+            function updatePaginationInfo() {
+                const start = (currentPage - 1) * rowsPerPage + 1;
+                const end = Math.min(currentPage * rowsPerPage, totalRows);
+                $('#paginationInfo').text(`Showing ${start} to ${end} of ${totalRows} entries`);
+            }
+
+            // Show rows for current page
+            function showPage(page) {
+                currentPage = page;
+                $rows.hide();
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                $rows.slice(start, end).show();
+                initPagination();
+            }
+
+            // Search functionality
+            $('#searchButton').click(function() {
+                const searchText = $('#searchInput').val().toLowerCase();
+                $rows = $('#tableBody tr'); // Reset rows
+                
+                if (searchText.trim() === '') {
+                    $rows.show();
+                } else {
+                    $rows.each(function() {
+                        const rowText = $(this).text().toLowerCase();
+                        $(this).toggle(rowText.includes(searchText));
+                    });
+                }
+                
+                $rows = $('#tableBody tr:visible'); // Update visible rows
+                totalRows = $rows.length;
+                pageCount = Math.ceil(totalRows / rowsPerPage);
+                currentPage = 1;
+                showPage(currentPage);
+            });
+
+            // Pagination click handler
+            $(document).on('click', '.page-link', function(e) {
+                e.preventDefault();
+                const page = parseInt($(this).data('page'));
+                if (!isNaN(page)) {
+                    showPage(page);
+                }
+            });
+
+            // Initialize pagination
+            showPage(1);
+
+            // Edit expense modal
+            $(document).on('click', '.edit-expense', function() {
                 var ticketId = $(this).data("id");
                 var expense = $(this).data("expense");
 
@@ -116,15 +328,16 @@
                 $("#expenseModal").modal("show");
             });
 
-            $(".delete-ticket").click(function () {
-                var ticketId = $(this).data("id");
-                $("#ticketIdDel").val(ticketId);
-                $("#deleteModal").modal("show");
-            });
-
-            $("#saveExpense").click(function () {
+            // Save expense
+            $("#saveExpense").click(function() {
                 var ticketId = $("#ticketId").val();
                 var newExpense = $("#newExpense").val();
+                
+                // Validation
+                if (!newExpense || isNaN(newExpense)) {
+                    showToast('Error', 'Please enter a valid number', false);
+                    return;
+                }
 
                 fetch('http://localhost:8080/api/dashboards/tickets/update/'+ticketId, {
                     method: "POST",
@@ -136,26 +349,40 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        console.log(response);
                         throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
                 .then(data => {
                     if (data.success) {
-                        $("#expense-" + ticketId).text(newExpense);
+                        // Update the value in the table
+                        $(`#expense-${ticketId}`).text(newExpense);
+                        
+                        // Also update the data-expense attribute of the edit button
+                        $(`.edit-expense[data-id="${ticketId}"]`).data("expense", newExpense);
+                        
                         $("#expenseModal").modal("hide");
+                        showToast('Success', 'Expense updated successfully');
                     } else {
-                        alert("Error: " + data.message);
+                        showToast('Error', data.message || 'Failed to update expense', false);
                     }
                 })
                 .catch(error => {
-                    console.log(error);
-                    alert("An error occurred.");
+                    console.error('Error:', error);
+                    showToast('Error', 'An error occurred while updating expense', false);
                 });
             });
 
-            $("#deleteTicket").click(function () {
+            // Delete ticket modal
+            $(document).on('click', '.delete-ticket', function(e) {
+                e.preventDefault();
+                var ticketId = $(this).data("id");
+                $("#ticketIdDel").val(ticketId);
+                $("#deleteModal").modal("show");
+            });
+
+            // Delete ticket
+            $("#deleteTicket").click(function() {
                 var ticketId = $("#ticketIdDel").val();
 
                 fetch("http://localhost:8080/api/dashboards/tickets/delete/"+ticketId, {
@@ -173,18 +400,155 @@
                 })
                 .then(data => {
                     if (data.success) {
-                        // Supprimer la ligne du tableau
-                        $("#expense-" + ticketId).closest("tr").remove();
+                        // Remove the row from table
+                        $(`#expense-${ticketId}`).closest("tr").remove();
                         $("#deleteModal").modal("hide");
+                        showToast('Success', 'Ticket deleted successfully');
+                        
+                        // Refresh pagination
+                        $rows = $('#tableBody tr');
+                        totalRows = $rows.length;
+                        pageCount = Math.ceil(totalRows / rowsPerPage);
+                        currentPage = Math.min(currentPage, pageCount);
+                        showPage(currentPage);
                     } else {
-                        alert("Error: " + data.message);
+                        showToast('Error', data.message || 'Failed to delete ticket', false);
                     }
                 })
                 .catch(error => {
-                    console.log(error);
-                    alert("An error occurred.");
+                    console.error('Error:', error);
+                    showToast('Error', 'An error occurred while deleting ticket', false);
                 });
             });
         });
     </script>
+
+    <style>
+        .avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+        
+        .table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+        }
+        
+        .table td {
+            vertical-align: middle;
+        }
+        
+        .badge {
+            padding: 0.35em 0.65em;
+            font-weight: 500;
+        }
+        
+        /* Status badges */
+        .badge-open {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .badge-in-progress {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .badge-resolved {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .badge-closed {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        /* Priority badges */
+        .badge-low {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .badge-medium {
+            background-color: #f39c12;
+            color: white;
+        }
+        
+        .badge-high {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .badge-critical {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+        
+        .pagination .page-link {
+            color: #3498db;
+        }
+        
+        .pagination .page-link:hover {
+            color: #2a7aad;
+        }
+        
+        .toast {
+            min-width: 300px;
+        }
+        
+        .text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+}
+
+@functions {
+    public string GetStatusBadgeClass(string status)
+    {
+        switch (status?.ToLower())
+        {
+            case "open":
+                return "badge-open";
+            case "in progress":
+                return "badge-in-progress";
+            case "resolved":
+                return "badge-resolved";
+            case "closed":
+                return "badge-closed";
+            default:
+                return "badge bg-light text-dark";
+        }
+    }
+    
+    public string GetPriorityBadgeClass(string priority)
+    {
+        switch (priority?.ToLower())
+        {
+            case "low":
+                return "badge-low";
+            case "medium":
+                return "badge-medium";
+            case "high":
+                return "badge-high";
+            case "critical":
+                return "badge-critical";
+            default:
+                return "badge bg-light text-dark";
+        }
+    }
 }
