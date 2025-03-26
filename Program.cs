@@ -21,7 +21,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddHttpClient<DashboardController>();
-
+builder.Services.AddHttpClient();
 // Ajouter les services d'authentification
 builder.Services.AddAuthentication(options =>
 {

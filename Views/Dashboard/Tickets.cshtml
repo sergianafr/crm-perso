@@ -78,7 +78,7 @@
                                 <td>@ticket.ManagerName</td>
                                 <td>@ticket.CustomerName</td>
                                 <td>@ticket.CreatedAt</td>
-                                <td class="text-end text-danger fw-bold" id="expense-@ticket.TicketId">@ticket.Expense</td>
+                                <td class="text-danger" style="font-size: small;" id="expense-@ticket.TicketId">@ticket.Expense</td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
                                         <a href="#" class="btn btn-sm btn-outline-primary edit-expense" 
@@ -403,7 +403,7 @@
                         // Remove the row from table
                         $(`#expense-${ticketId}`).closest("tr").remove();
                         $("#deleteModal").modal("hide");
-                        showToast('Success', 'Ticket deleted successfully');
+                        @* showToast('Success', 'Ticket deleted successfully'); *@
                         
                         // Refresh pagination
                         $rows = $('#tableBody tr');
@@ -417,7 +417,7 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showToast('Error', 'An error occurred while deleting ticket', false);
+                    @* showToast('Error', 'An error occurred while deleting ticket', false); *@
                 });
             });
         });

@@ -35,7 +35,7 @@ namespace crm_perso.Controllers
                     Encoding.UTF8,
                     "text/plain"
                 );
-                Console.WriteLine($"Email envoyé : {email}");
+                Console.WriteLine($"Em.ail envoyé : {email}");
 
                 var response = await _httpClient.PostAsync("http://localhost:8080/api/login/", content);
                 Console.WriteLine($"Statut reçu : {response.StatusCode}");

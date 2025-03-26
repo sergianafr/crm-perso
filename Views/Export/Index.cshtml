@@ -1,0 +1,23 @@
+<form method="post" enctype="multipart/form-data" asp-action="UploadJson" id="uploadForm">
+    <div class="mb-4">
+        <label class="form-label text-gray-600 mb-2">
+            <i class="fas fa-file-upload me-2 text-gray-500"></i>Fichier JSON
+        </label>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="file" name="file" accept=".json" required>
+            <label class="custom-file-label" for="file">Choisir un fichier...</label>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn crm-btn btn-lg">
+        <i class="fas fa-upload me-2"></i>Upload
+    </button>
+</form>
+
+<script>
+    // Affiche le nom du fichier sélectionné
+    document.getElementById('file').addEventListener('change', function(e) {
+        var fileName = e.target.files[0]?.name || "Choisir un fichier...";
+        document.querySelector('.custom-file-label').textContent = fileName;
+    });
+</script>
